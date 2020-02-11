@@ -45,10 +45,6 @@ public class UsuarioService {
 		}
 		throw new UsuarioNaoExisteException("Usuário não existe");
 	}
-	
-	private boolean isAdmin(Usuario usuario) {
-		return "admin".equalsIgnoreCase(usuario.getLogin());
-	}
 
 	public void remover(Long id) throws UsuarioNaoEditavelException, UsuarioNaoExisteException {
 		Optional<Usuario> usuarioExistente = this.usuarioRepository.findById(id);			
@@ -59,6 +55,10 @@ public class UsuarioService {
 			return;
 		}
 		throw new UsuarioNaoExisteException("Usuário não existe");
+	}
+	
+	private boolean isAdmin(Usuario usuario) {
+		return "admin".equalsIgnoreCase(usuario.getLogin());
 	}
 	
 }
