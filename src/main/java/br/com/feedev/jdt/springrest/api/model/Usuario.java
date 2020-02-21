@@ -1,34 +1,61 @@
+
 package br.com.feedev.jdt.springrest.api.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 
 import br.com.feedev.jdt.springrest.api.PasswordUtil;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario implements Serializable{
-	
+//@Table(name = "usuario", uniqueConstraints = @UniqueConstraint(columnNames = "login", name = "login_uk" ))
+public class Usuario implements Serializable {
+
 	private static final long serialVersionUID = -444998333137088243L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
-	
+
 	@NotEmpty(message = "Login é obrigatório.")
+	@Column(unique = true)
 	private String login;
-	
+
 	@NotEmpty(message = "Senha é obrigatória.")
 	private String senha;
-	
+
 	@NotEmpty(message = "Nome é obrigatório.")
 	private String nome;
+
+	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Telefone> telefones;
+
+	public Usuario() {
+	}
+	
+	public Usuario(String login, String senha, String nome, List<Telefone> telefones) {
+		this.login = login;
+		this.senha = senha;
+		this.nome = nome;
+		this.telefones = telefones;
+	}
+
+	public Usuario(String login, String senha, String nome) {
+		this.login = login;
+		this.senha = senha;
+		this.nome = nome;
+	}
 
 	public Long getId() {
 		return id;
@@ -62,8 +89,12 @@ public class Usuario implements Serializable{
 		this.nome = nome;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public List<Telefone> getTelefones() {
+		return telefones;
+	}
+
+	public void setTelefones(List<Telefone> telefones) {
+		this.telefones = telefones;
 	}
 
 	@Override
@@ -99,7 +130,8 @@ public class Usuario implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", login=" + login + ", senha=" + senha + ", nome=" + nome + "]";
+		return "Usuario [id=" + id + ", login=" + login + ", senha=" + senha + ", nome=" + nome + ", telefones="
+				+ telefones + "]";
 	}
-	
+
 }
