@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import br.com.feedev.jdt.springrest.api.exception.UsuarioNaoEditavelException;
 import br.com.feedev.jdt.springrest.api.exception.UsuarioNaoExisteException;
 import br.com.feedev.jdt.springrest.api.model.Usuario;
 import br.com.feedev.jdt.springrest.api.service.UsuarioService;
+
 
 @RestController
 @RequestMapping(path = "/usuario")
