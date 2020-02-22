@@ -30,6 +30,9 @@ public class UsuarioService {
 	public Usuario salvar(Usuario usuario) {
 		Optional<Usuario> usuarioExistente = this.usuarioRepository.findByLogin(usuario.getLogin());
 		if (!usuarioExistente.isPresent()) {
+			usuario.getTelefones().forEach(telefone -> {
+				telefone.setUsuario(usuario);
+			});
 			return this.usuarioRepository.save(usuario);			
 		}
 		return null;
@@ -41,6 +44,9 @@ public class UsuarioService {
 			if(isAdmin(usuarioExistente.get()))
 				throw new UsuarioNaoEditavelException("Não é possível alterar usuário administrativo");
 			usuario.setId(id);
+			usuario.getTelefones().forEach(telefone -> {
+				telefone.setUsuario(usuario);
+			});
 			return this.usuarioRepository.save(usuario);			
 		}
 		throw new UsuarioNaoExisteException("Usuário não existe");
