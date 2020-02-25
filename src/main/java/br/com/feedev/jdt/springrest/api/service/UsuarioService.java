@@ -6,6 +6,10 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.feedev.jdt.springrest.api.exception.UsuarioNaoEditavelException;
@@ -14,10 +18,22 @@ import br.com.feedev.jdt.springrest.api.model.Usuario;
 import br.com.feedev.jdt.springrest.api.repository.UsuarioRepository;
 
 @Service
-public class UsuarioService {
+public class UsuarioService implements UserDetailsService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
+	/**
+	 * Spring security implementation to load user by username
+	 */
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<Usuario> user = this.usuarioRepository.findByLogin(username);
+		if (!user.isPresent()) {
+			throw new UsernameNotFoundException("Usuário não foi encontrado.");			
+		}
+		return new User(user.get().getUsername(), user.get().getPassword(), user.get().getAuthorities());
+	}
 	
 	public Optional<Usuario> buscarPorId(Long id) {
 		return this.usuarioRepository.findById(id);

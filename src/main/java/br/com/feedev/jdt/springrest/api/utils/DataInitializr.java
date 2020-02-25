@@ -13,9 +13,10 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import br.com.feedev.jdt.springrest.api.model.Role;
 import br.com.feedev.jdt.springrest.api.model.Telefone;
 import br.com.feedev.jdt.springrest.api.model.Usuario;
-import br.com.feedev.jdt.springrest.api.repository.TelefoneRepository;
+import br.com.feedev.jdt.springrest.api.repository.RoleRepository;
 import br.com.feedev.jdt.springrest.api.repository.UsuarioRepository;
 
 @Component
@@ -25,54 +26,41 @@ public class DataInitializr implements ApplicationListener<ContextRefreshedEvent
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private UsuarioRepository usuarioRepository;
-//	private RoleRepository roleRepository;
-//	private ProfissaoRepository profissaoRepository;
-//	private PessoaRepository pessoaRepository;
-	private TelefoneRepository telefoneRepository;
+	private RoleRepository roleRepository;
 
 	@Autowired
-	public DataInitializr(UsuarioRepository usuarioRepository,
-			TelefoneRepository telefoneRepository) {
+	public DataInitializr(UsuarioRepository usuarioRepository, RoleRepository roleRepository) {
 		this.usuarioRepository = usuarioRepository;
-		this.telefoneRepository = telefoneRepository;
+		this.roleRepository = roleRepository;
 	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-//		log.info("Inserindo Roles");
-//		Role roleAdmin = new Role("ROLE_ADMIN");
-//		Role roleGerente = new Role("ROLE_GERENTE");
-//		Role roleOpCaixa = new Role("ROLE_OPCAIXA");
-//		List<Role> roles = Arrays.asList(roleAdmin, roleGerente, roleOpCaixa);
-//		roles.forEach(role -> {
-//			try {
-//				this.roleRepository.save(role);
-//			} catch (DataIntegrityViolationException e) {
-//			}
-//		});
-//		roles = roleRepository.findAll();
-//		for (Role role : roles) {
-//			if (role.equals(roleAdmin))
-//				roleAdmin = role;
-//			if (role.equals(roleGerente))
-//				roleGerente = role;
-//			if (role.equals(roleOpCaixa))
-//				roleOpCaixa = role;
-//		}
+		log.info("Inserindo Roles");
+		Role roleAdmin = new Role("ROLE_ADMIN");
+		Role roleGerente = new Role("ROLE_GERENTE");
+		Role roleOpCaixa = new Role("ROLE_OPCAIXA");
+		List<Role> roles = Arrays.asList(roleAdmin, roleGerente, roleOpCaixa);
+		roles.forEach(role -> {
+			try {
+				this.roleRepository.save(role);
+			} catch (DataIntegrityViolationException e) {
+			}
+		});
+		roles = roleRepository.findAll();
+		for (Role role : roles) {
+			if (role.equals(roleAdmin))
+				roleAdmin = role;
+			if (role.equals(roleGerente))
+				roleGerente = role;
+			if (role.equals(roleOpCaixa))
+				roleOpCaixa = role;
+		}
 
 		log.info("Inserindo usuários");
-//		List<Usuario> usuarios = Arrays.asList(
-//				new Usuario("admin", BCryptUtils.criptografar("admin"), Arrays.asList(roleAdmin, roleGerente)),
-//				new Usuario("user01", BCryptUtils.criptografar("user01"), Arrays.asList(roleOpCaixa)));
-//		usuarios.forEach(usuario -> {
-//			try {
-//				this.usuarioRepository.save(usuario);
-//			} catch (DataIntegrityViolationException e) {
-//			}
-//		});
 		List<Usuario> usuarios = Arrays.asList(
-				new Usuario("admin", BCryptUtils.criptografar("admin"), "Admin"),
-				new Usuario("user01", BCryptUtils.criptografar("user01"), "Admin"));
+				new Usuario("admin", BCryptUtils.criptografar("admin"), "Admin", Arrays.asList(roleAdmin, roleGerente)),
+				new Usuario("user01", BCryptUtils.criptografar("user01"), "User 01", Arrays.asList(roleOpCaixa)));
 		usuarios.forEach(usuario -> {
 			try {
 				List<Telefone> telefones = Arrays.asList(

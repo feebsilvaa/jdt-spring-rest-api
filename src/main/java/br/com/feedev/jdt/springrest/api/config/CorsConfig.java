@@ -1,4 +1,4 @@
-package br.com.feedev.jdt.springrest.api;
+package br.com.feedev.jdt.springrest.api.config;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

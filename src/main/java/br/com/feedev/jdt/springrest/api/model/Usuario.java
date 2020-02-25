@@ -1,27 +1,35 @@
 
 package br.com.feedev.jdt.springrest.api.model;
 
-import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import br.com.feedev.jdt.springrest.api.PasswordUtil;
 
 @Entity
 @Table(name = "usuario")
 //@Table(name = "usuario", uniqueConstraints = @UniqueConstraint(columnNames = "login", name = "login_uk" ))
-public class Usuario implements Serializable {
+public class Usuario implements UserDetails {
 
-	private static final long serialVersionUID = -444998333137088243L;
+	private static final long serialVersionUID = 7147024309325234419L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -40,20 +48,38 @@ public class Usuario implements Serializable {
 	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Telefone> telefones;
 
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "usuario_role",
+		joinColumns = @JoinColumn(
+				referencedColumnName = "id",
+				table = "usuario", 
+				updatable = false,
+				unique = false),
+		inverseJoinColumns = @JoinColumn(
+				referencedColumnName = "id",
+				table = "role", 
+				updatable = false,
+				unique = false),
+	uniqueConstraints = @UniqueConstraint(columnNames = { "usuario_id", "roles_id" }, name = "unique_role_user"))
+	private List<Role> roles;
+
 	public Usuario() {
 	}
 	
-	public Usuario(String login, String senha, String nome, List<Telefone> telefones) {
+	public Usuario(String login, String senha, String nome, List<Telefone> telefones, List<Role> roles) {
 		this.login = login;
 		this.senha = senha;
 		this.nome = nome;
 		this.telefones = telefones;
+		this.roles = roles;
 	}
 
-	public Usuario(String login, String senha, String nome) {
+	public Usuario(String login, String senha, String nome, List<Role> roles) {
 		this.login = login;
 		this.senha = senha;
 		this.nome = nome;
+		this.roles = roles;
 	}
 
 	public Long getId() {
@@ -131,6 +157,41 @@ public class Usuario implements Serializable {
 	public String toString() {
 		return "Usuario [id=" + id + ", login=" + login + ", senha=" + senha + ", nome=" + nome + ", telefones="
 				+ telefones + "]";
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return roles;
+	}
+
+	@Override
+	public String getPassword() {
+		return senha;
+	}
+
+	@Override
+	public String getUsername() {
+		return login;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 }

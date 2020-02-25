@@ -8,6 +8,10 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class PasswordUtil {
+	
+	public static void main(String[] args) {
+		System.out.println(encrypt("jdt-spring-rest-api"));
+	}
 
 	public static String encrypt(String senha) {
 		{
